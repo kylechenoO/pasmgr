@@ -67,7 +67,7 @@ A self-hosted web-based password manager with admin-managed user accounts and AE
 |  * FastAPI (Python 3.10+)                                    |
 |  * Uvicorn ASGI Server                                       |
 |  * JWT Authentication                                        |
-|  * PBKDF2-SHA256 (600k rounds) for login passwords          |
+|  * PBKDF2-SHA256 (600k rounds) for login passwords           |
 |  * AES-256-GCM for vault encryption                          |
 +---------------------+---------------------------------------+
                       | SQLAlchemy ORM
@@ -101,7 +101,7 @@ A self-hosted web-based password manager with admin-managed user accounts and AE
 |    FastAPI Vault Router                  |
 |  * Verify JWT & user ownership           |
 |  * Encrypt/Decrypt vault data            |
-|  * CRUD operations                        |
+|  * CRUD operations                       |
 +-------+----------------------------------+
         |
         | 3. Database Operations
@@ -212,6 +212,7 @@ CREATE DATABASE pasmgr CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ```bash
 cd pasmgr
+source bin/activate
 alembic -c etc/alembic.ini upgrade head
 ```
 
@@ -461,7 +462,7 @@ pasmgr/
 +-- etc/
 |   +-- app.conf                   # secrets & connection strings - NEVER commit
 |   +-- logging.conf               # Python logging INI (rotation, format, handlers)
-|   +-- alembic.ini                # Alembic config -> run as: alembic -c etc/alembic.ini ...
+|   +-- alembic.ini                # Alembic config (run from project root)
 |   +-- pasmgr.service             # systemd unit file (RHEL / CentOS)
 +-- tools/
 |   +-- init.sh                    # create virtual environment (python3 -m venv .)
@@ -678,14 +679,12 @@ first_admin_password=YourSecurePassword123!
 #### 5. Run Database Migrations
 
 ```bash
-cd backend
-alembic -c ../etc/alembic.ini upgrade head
+alembic -c etc/alembic.ini upgrade head
 ```
 
 #### 6. Create First Admin User
 
 ```bash
-cd ..
 python3 bin/seed_admin.py
 ```
 
@@ -733,9 +732,7 @@ cp etc/app.conf.example etc/app.conf
 vim etc/app.conf  # Update with production values
 
 # Run migrations and seed admin
-cd backend
-alembic -c ../etc/alembic.ini upgrade head
-cd ..
+alembic -c etc/alembic.ini upgrade head
 python3 bin/seed_admin.py
 ```
 
@@ -974,10 +971,9 @@ source bin/activate
 pip install -r requirements.txt --upgrade
 
 # Run migrations
-cd backend
-alembic upgrade head
+alembic -c etc/alembic.ini upgrade head
 
-# Exit to root and restart service
+# Restart service
 exit
 sudo systemctl restart pasmgr
 ```

@@ -13,7 +13,7 @@
 # ---------------------------------------------------------------------------
 
 [Unit]
-Description=Password Manager – FastAPI backend
+Description=Password Manager FastAPI backend
 After=network-online.target mysql.service mariadb.service
 Wants=network-online.target
 
@@ -28,7 +28,7 @@ WorkingDirectory=/opt/pasmgr/backend
 # OPTION 1 (Recommended): Use virtual environment
 # Create venv: cd /opt/pasmgr && python3 -m venv .
 # Install deps: /opt/pasmgr/bin/pip install -r /opt/pasmgr/requirements.txt
-ExecStart=/opt/pasmgr/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8001 --log-level info
+ExecStart=/opt/pasmgr/bin/start.sh
 
 # OPTION 2 (Alternative): Use system python3 (not recommended for production)
 # ExecStart=/usr/bin/python3 -m uvicorn main:app --host 0.0.0.0 --port 8001 --log-level info
