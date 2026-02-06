@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<!-- ---------------------------------------------------------------------------
+     Author  : Kyle <kyle@hacking-linux.com>
+     Version : 20260206v1
+     --------------------------------------------------------------------------- -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Management – Password Manager</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- -- Top Navigation --------------------------------------------------- -->
+<nav class="topbar">
+  <div class="topbar-left">
+    <h1>Admin Panel</h1>
+    <div class="nav-links">
+      <a href="vault.html">Vault</a>
+      <a href="pasgen.html">PasGen</a>
+      <div class="nav-dropdown">
+        <button class="nav-dropdown-btn active">Admin</button>
+        <div class="nav-dropdown-menu">
+          <a href="admin.html">Create User</a>
+          <a href="admin-users.html" class="active">User Management</a>
+          <a href="admin-audit.html">Audit Log</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <span id="logged-in-email"></span>
+    <button class="btn btn-secondary btn-sm" id="logout-btn">Logout</button>
+  </div>
+</nav>
+
+<!-- -- Page Body ------------------------------------------------------- -->
+<div class="admin-users-page">
+  <div class="card admin-table-card">
+    <h2>Users</h2>
+    <div class="table-wrap admin-table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Active</th>
+            <th>Last Login</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="user-tbody">
+          <!-- populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- -- Reset-Password Modal ------------------------------------------- -->
+<div class="modal-overlay" id="rp-modal">
+  <div class="modal">
+    <h2>Reset Password</h2>
+    <p>Enter a new temporary password for this user.  They will be required to change it on next login.</p>
+
+    <form id="rp-form" autocomplete="off">
+      <input type="hidden" id="rp-user-id" />
+      <div class="input-group">
+        <label for="rp-new">New password</label>
+        <input type="password" id="rp-new" required placeholder="••••••••" />
+      </div>
+      <div class="input-group">
+        <label for="rp-confirm">Confirm password</label>
+        <input type="password" id="rp-confirm" required placeholder="••••••••" />
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary">Reset</button>
+        <button type="button" class="btn btn-secondary" id="rp-close">Cancel</button>
+      </div>
+      <p class="error-msg" id="rp-error"></p>
+    </form>
+  </div>
+</div>
+
+<!-- -- Change-Role Modal ---------------------------------------------- -->
+<div class="modal-overlay" id="cr-modal">
+  <div class="modal">
+    <h2>Change Role</h2>
+    <p>Select the new role for <strong id="cr-email">—</strong>.</p>
+
+    <form id="cr-form" autocomplete="off">
+      <input type="hidden" id="cr-user-id" />
+      <div class="input-group" style="max-width:180px;">
+        <label for="cr-role">Role</label>
+        <select id="cr-role">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="button" class="btn btn-secondary" id="cr-close">Cancel</button>
+      </div>
+      <p class="error-msg" id="cr-error"></p>
+    </form>
+  </div>
+</div>
+
+<!-- -- Toast ----------------------------------------------------------- -->
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+<script>initUserManagementPage();</script>
+<!-- -- Footer ---------------------------------------------------------- -->
+<footer class="app-footer">
+  <div class="app-footer-content">
+    <span class="app-footer-item">© 2026 Kyle</span>
+    <span class="app-footer-item">Email: <a href="mailto:kyle@hacking-linux.com">kyle@hacking-linux.com</a></span>
+    <span class="app-footer-item">Version: 20260206v1</span>
+    <span class="app-footer-item">License: <a href="https://opensource.org/licenses/MIT" target="_blank">MIT</a></span>
+  </div>
+</footer>
+
+
+</body>
+</html>

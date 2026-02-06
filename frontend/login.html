@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<!-- ---------------------------------------------------------------------------
+     Author  : Kyle <kyle@hacking-linux.com>
+     Version : 20260206v1
+     --------------------------------------------------------------------------- -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Password Manager – Login</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- -- Login Card ------------------------------------------------------- -->
+<div class="centered-page" id="login-page">
+  <div class="card" style="max-width:400px;">
+    <h2 style="text-align:center;">Password Manager</h2>
+    <p class="subtitle" style="text-align:center;">Sign in with your account</p>
+
+    <form id="login-form" autocomplete="off">
+      <div class="input-group">
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" required placeholder="you@example.com" />
+      </div>
+      <div class="input-group">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" required placeholder="••••••••" />
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Login</button>
+      <p class="error-msg" id="login-error"></p>
+    </form>
+  </div>
+</div>
+
+<!-- -- Force Password-Change Modal -------------------------------------- -->
+<!-- This modal has NO close button.  The user must change their password
+     before they can proceed anywhere in the app. -->
+<div class="modal-overlay" id="cp-modal">
+  <div class="modal">
+    <h2>Set Your Password</h2>
+    <p>Your account requires a password change before you can continue.</p>
+
+    <form id="cp-form" autocomplete="off">
+      <div class="input-group">
+        <label for="cp-old">Current (temporary) password</label>
+        <input type="password" id="cp-old" required placeholder="••••••••" />
+      </div>
+      <div class="input-group">
+        <label for="cp-new">New password</label>
+        <input type="password" id="cp-new" required placeholder="••••••••" />
+      </div>
+      <div class="input-group">
+        <label for="cp-confirm">Confirm new password</label>
+        <input type="password" id="cp-confirm" required placeholder="••••••••" />
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">
+        Must be ≥ 8 characters with at least one uppercase, one lowercase, and one digit.
+      </p>
+      <button type="submit" class="btn btn-primary btn-full">Save Password</button>
+      <p class="error-msg" id="cp-error"></p>
+    </form>
+  </div>
+</div>
+
+<!-- -- Toast (shared across pages) -------------------------------------- -->
+<div class="toast" id="toast"></div>
+
+<!-- -- Footer ---------------------------------------------------------- -->
+<footer class="app-footer">
+  <div class="app-footer-content">
+    <span class="app-footer-item">© 2026 Kyle</span>
+    <span class="app-footer-item">Email: <a href="mailto:kyle@hacking-linux.com">kyle@hacking-linux.com</a></span>
+    <span class="app-footer-item">Version: 20260206v1</span>
+    <span class="app-footer-item">License: <a href="https://opensource.org/licenses/MIT" target="_blank">MIT</a></span>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+<script>initLoginPage();</script>
+</body>
+</html>

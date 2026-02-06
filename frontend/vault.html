@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<!-- ---------------------------------------------------------------------------
+     Author  : Kyle <kyle@hacking-linux.com>
+     Version : 20260206v1
+     --------------------------------------------------------------------------- -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Vault – Password Manager</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- -- Top Navigation --------------------------------------------------- -->
+<nav class="topbar">
+  <div class="topbar-left">
+    <h1>My Vault</h1>
+    <div class="nav-links">
+      <a href="vault.html" class="active">Vault</a>
+      <a href="pasgen.html">PasGen</a>
+      <!-- admin dropdown – shown by JS when role == admin -->
+      <div class="nav-dropdown" id="admin-nav-dropdown" style="display:none;">
+        <button class="nav-dropdown-btn">Admin</button>
+        <div class="nav-dropdown-menu">
+          <a href="admin.html">Create User</a>
+          <a href="admin-users.html">User Management</a>
+          <a href="admin-audit.html">Audit Log</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <span id="logged-in-email"></span>
+    <button class="btn btn-secondary btn-sm" id="logout-btn">Logout</button>
+  </div>
+</nav>
+
+<!-- -- Page Layout ------------------------------------------------------- -->
+<div class="page-body">
+
+  <!-- Sidebar – item list ------------------------------------------------ -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>Entries</h2>
+      <div class="sidebar-header-btns">
+        <button class="btn btn-primary btn-sm" id="add-item-btn">+ New</button>
+        <button class="btn btn-secondary btn-sm icon-btn" id="export-btn">📤<span class="tooltip">Export passwords (.xlsx)</span></button>
+        <button class="btn btn-secondary btn-sm icon-btn" id="import-btn">📥<span class="tooltip">Import passwords (.xlsx)</span></button>
+      </div>
+    </div>
+    <!-- file picker for import (hidden, triggered by JS) -->
+    <input type="file" id="import-file-input" accept=".xlsx" style="display:none;" />
+    <div class="sidebar-search">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Search…" autocomplete="off" />
+    </div>
+    <ul class="item-list" id="item-list">
+      <!-- populated by JS -->
+    </ul>
+  </aside>
+
+  <!-- Main – detail / edit form ------------------------------------------ -->
+  <main class="main-content">
+    <div id="detail-panel" style="display:none;">
+      <h2 id="detail-heading" style="margin-bottom:20px;">New Entry</h2>
+
+      <form id="item-form" autocomplete="off">
+        <div class="input-group">
+          <label for="item-category">Category</label>
+          <select id="item-category">
+            <option value="login">Login</option>
+            <option value="ssh_key">SSH</option>
+            <option value="api_credential">API Credentials</option>
+            <option value="database">Database</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="item-title">Title</label>
+          <input type="text" id="item-title" required placeholder="e.g. GitHub" />
+        </div>
+
+        <div class="input-group" id="field-username" data-categories="login,ssh_key,database">
+          <label for="item-username" id="label-username">Username</label>
+          <input type="text" id="item-username" placeholder="you@example.com" />
+        </div>
+
+        <div class="input-group" id="field-password" data-categories="login,ssh_key,database">
+          <label id="label-password">Password</label>
+          <div class="password-row">
+            <input type="password" id="item-password" placeholder="••••••••" />
+            <button type="button" class="btn btn-secondary btn-sm" id="copy-password-btn">📋 Copy</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="reveal-btn">👁 Reveal</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="gen-toggle-btn" data-show-for="login,ssh_key,database">⚡ Generate</button>
+          </div>
+        </div>
+
+        <div class="input-group" id="field-api-key" data-categories="api_credential">
+          <label for="item-api-key">API Key (optional)</label>
+          <textarea id="item-api-key" placeholder="API key..."></textarea>
+        </div>
+
+        <div class="input-group" id="field-api-secret" data-categories="api_credential">
+          <label for="item-api-secret">API Secret (optional)</label>
+          <textarea id="item-api-secret" placeholder="Secret key or token..."></textarea>
+        </div>
+
+        <!-- Password generator options (hidden until toggled) ------------ -->
+        <div class="gen-panel" id="gen-panel">
+          <div class="gen-row">
+            <span style="font-size:13px;color:var(--text-secondary);font-weight:500;">Mode:</span>
+            <div class="radio-group">
+              <label><input type="radio" name="gen-mode" value="random" checked /> Random</label>
+              <label><input type="radio" name="gen-mode" value="memorable" /> Memorable</label>
+              <label><input type="radio" name="gen-mode" value="pin" /> PIN</label>
+            </div>
+          </div>
+          <div class="gen-row" id="gen-random-opts">
+            <div class="check-group">
+              <label><input type="checkbox" id="gen-digits" checked /> Digits</label>
+              <label><input type="checkbox" id="gen-symbols" /> Symbols</label>
+            </div>
+            <div class="length-group">
+              <span>Length:</span>
+              <input type="number" id="gen-length-input" value="16" min="6" max="256" style="width:60px;" />
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" id="gen-go-btn">Generate</button>
+        </div>
+
+        <div class="input-group" id="field-url" data-categories="login,api_credential,database">
+          <label for="item-url" id="label-url">URL (optional)</label>
+          <input type="text" id="item-url" placeholder="https://example.com" />
+        </div>
+
+        <div class="input-group" id="field-port" data-categories="database">
+          <label for="item-port">Port (optional)</label>
+          <input type="number" id="item-port" placeholder="3306" min="1" max="65535" />
+        </div>
+
+        <div class="input-group" id="field-private-key" data-categories="ssh_key">
+          <label for="item-private-key">Private Key (optional)</label>
+          <textarea id="item-private-key" placeholder="-----BEGIN RSA PRIVATE KEY-----&#10;..."></textarea>
+        </div>
+
+        <div class="input-group" id="field-public-key" data-categories="ssh_key">
+          <label for="item-public-key">Public Key (optional)</label>
+          <textarea id="item-public-key" placeholder="ssh-rsa AAAAB3NzaC1yc2E..."></textarea>
+        </div>
+
+        <div class="input-group">
+          <label for="item-notes">Notes (optional)</label>
+          <textarea id="item-notes" placeholder="Additional info…"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="save-btn">Save</button>
+          <button type="button" class="btn btn-danger" id="delete-btn" style="display:none;">Delete</button>
+          <button type="button" class="btn btn-secondary" id="cancel-btn">Cancel</button>
+        </div>
+
+        <p class="error-msg" id="item-error"></p>
+      </form>
+    </div>
+
+    <!-- Empty state shown when no item is selected ---------------------- -->
+    <div id="empty-state" style="text-align:center;padding:80px 20px;color:var(--text-muted);">
+      <p style="font-size:40px;margin-bottom:12px;">🔐</p>
+      <p style="font-size:16px;">Select an entry from the sidebar, or click <strong>+ New</strong> to create one.</p>
+    </div>
+  </main>
+</div>
+
+<!-- -- Toast ----------------------------------------------------------- -->
+<div class="toast" id="toast"></div>
+
+<!-- -- Footer ---------------------------------------------------------- -->
+<footer class="app-footer">
+  <div class="app-footer-content">
+    <span class="app-footer-item">© 2026 Kyle</span>
+    <span class="app-footer-item">Email: <a href="mailto:kyle@hacking-linux.com">kyle@hacking-linux.com</a></span>
+    <span class="app-footer-item">Version: 20260206v1</span>
+    <span class="app-footer-item">License: <a href="https://opensource.org/licenses/MIT" target="_blank">MIT</a></span>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+<script>initVaultPage();</script>
+</body>
+</html>

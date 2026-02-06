@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<!-- ---------------------------------------------------------------------------
+     Author  : Kyle <kyle@hacking-linux.com>
+     Version : 20260206v1
+     --------------------------------------------------------------------------- -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create User – Password Manager</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- -- Top Navigation --------------------------------------------------- -->
+<nav class="topbar">
+  <div class="topbar-left">
+    <h1>Admin Panel</h1>
+    <div class="nav-links">
+      <a href="vault.html">Vault</a>
+      <a href="pasgen.html">PasGen</a>
+      <div class="nav-dropdown">
+        <button class="nav-dropdown-btn active">Admin</button>
+        <div class="nav-dropdown-menu">
+          <a href="admin.html" class="active">Create User</a>
+          <a href="admin-users.html">User Management</a>
+          <a href="admin-audit.html">Audit Log</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <span id="logged-in-email"></span>
+    <button class="btn btn-secondary btn-sm" id="logout-btn">Logout</button>
+  </div>
+</nav>
+
+<!-- -- Page Body ------------------------------------------------------- -->
+<div class="centered-page" style="padding-top: var(--topbar-h);">
+  <div class="card" style="width:100%; max-width:480px;">
+    <h2>Create User</h2>
+    <p class="subtitle">New users must change their password on first login.</p>
+
+    <form id="create-user-form" autocomplete="off">
+      <div class="input-group">
+        <label for="cu-email">Email</label>
+        <input type="email" id="cu-email" required placeholder="user@example.com" />
+      </div>
+      <div class="input-group">
+        <label for="cu-password">Temporary Password</label>
+        <input type="password" id="cu-password" required placeholder="••••••••" />
+      </div>
+      <div class="input-group" style="max-width:180px;">
+        <label for="cu-role">Role</label>
+        <select id="cu-role">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Create User</button>
+      <p class="error-msg" id="cu-error"></p>
+    </form>
+  </div>
+</div>
+
+<!-- -- Toast ----------------------------------------------------------- -->
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+<script>initCreateUserPage();</script>
+<!-- -- Footer ---------------------------------------------------------- -->
+<footer class="app-footer">
+  <div class="app-footer-content">
+    <span class="app-footer-item">© 2026 Kyle</span>
+    <span class="app-footer-item">Email: <a href="mailto:kyle@hacking-linux.com">kyle@hacking-linux.com</a></span>
+    <span class="app-footer-item">Version: 20260206v1</span>
+    <span class="app-footer-item">License: <a href="https://opensource.org/licenses/MIT" target="_blank">MIT</a></span>
+  </div>
+</footer>
+
+
+</body>
+</html>

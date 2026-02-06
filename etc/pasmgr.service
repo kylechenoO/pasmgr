@@ -1,0 +1,63 @@
+# ---------------------------------------------------------------------------
+# pasmgr.service – systemd unit for the Password Manager backend
+#
+# Install
+#   sudo cp etc/pasmgr.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now pasmgr
+#
+# Adjust the following variables before installing:
+#   User          – the OS user that owns the project files
+#   WorkingDirectory – absolute path to the project root (contains backend/)
+#   ExecStart     – absolute path to the venv python (or system python3)
+# ---------------------------------------------------------------------------
+
+[Unit]
+Description=Password Manager – FastAPI backend
+After=network-online.target mysql.service mariadb.service
+Wants=network-online.target
+
+[Service]
+# -- identity --------------------------------------------------------------
+User=pasmgr
+Group=pasmgr
+
+# -- paths – EDIT THESE to match your deployment --------------------------
+WorkingDirectory=/opt/pasmgr/backend
+
+# OPTION 1 (Recommended): Use virtual environment
+# Create venv: cd /opt/pasmgr && python3 -m venv .
+# Install deps: /opt/pasmgr/bin/pip install -r /opt/pasmgr/requirements.txt
+ExecStart=/opt/pasmgr/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8001 --log-level info
+
+# OPTION 2 (Alternative): Use system python3 (not recommended for production)
+# ExecStart=/usr/bin/python3 -m uvicorn main:app --host 0.0.0.0 --port 8001 --log-level info
+
+# -- environment & secrets -------------------------------------------------
+# app.conf lives in etc/ and is loaded by pydantic-settings automatically.
+# Uncomment the next line if you also want systemd to read it:
+# EnvironmentFile=/opt/pasmgr/etc/app.conf
+
+# -- port override (optional) ----------------------------------------------
+# Environment=PASMGR_PORT=8001
+
+# -- hardening -------------------------------------------------------------
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65535
+
+# Prevent the service from accessing anything outside WorkingDirectory
+# (relaxed: allow read of /opt/pasmgr so etc/app.conf and log/ are reachable)
+ProtectSystem=strict
+ReadWritePaths=/opt/pasmgr/log
+ReadOnlyPaths=/opt/pasmgr/etc
+
+# -- logging ---------------------------------------------------------------
+# uvicorn stdout/stderr → journald  (view with: journalctl -u pasmgr -f)
+# The app also writes its own rotating log to <project-root>/log/app.log
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=pasmgr
+
+[Install]
+WantedBy=multi-user.target

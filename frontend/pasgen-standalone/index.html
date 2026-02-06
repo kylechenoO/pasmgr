@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Generator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="card" role="main">
+
+    <!-- Section 1: Password type selector -->
+    <section class="card__section">
+      <p class="card__label">Choose password type</p>
+      <div class="segmented-control" role="radiogroup" aria-label="Password type">
+        <button class="seg-btn seg-btn--active"
+                role="radio" aria-checked="true"
+                data-type="random" type="button">
+          <svg class="seg-btn__icon" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Random
+        </button>
+        <button class="seg-btn"
+                role="radio" aria-checked="false"
+                data-type="memorable" type="button">
+          <svg class="seg-btn__icon" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M7 1a4 4 0 00-4 4c0 1.5.8 2.8 2 3.5V10h2v1.5h2V10c1.2-.7 2-2 2-3.5a4 4 0 00-4-4z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+            <path d="M5.5 12.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          Memorable
+        </button>
+        <button class="seg-btn"
+                role="radio" aria-checked="false"
+                data-type="pin" type="button">
+          <span class="seg-btn__icon seg-btn__icon--hash" aria-hidden="true">#</span>
+          PIN
+        </button>
+      </div>
+    </section>
+
+    <!-- Section 2: Customize -->
+    <section class="card__section" id="customize-section">
+      <p class="card__label">Customize your new password</p>
+
+      <div class="divider"></div>
+
+      <!-- Characters slider row -->
+      <div class="char-row">
+        <span class="char-row__label">Characters</span>
+        <input type="range" class="char-row__slider" id="length-slider"
+               min="6" max="32" value="20"
+               aria-label="Password length">
+        <span class="char-row__badge" id="length-badge">20</span>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Number & Symbol toggles -->
+      <div class="toggles-container" id="toggles-container">
+        <div class="toggle-row">
+          <span class="toggle-row__label">Numbers</span>
+          <label class="toggle" aria-label="Include numbers">
+            <input type="checkbox" class="toggle__input" id="numbers-toggle" checked>
+            <span class="toggle__track"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-row__label">Symbols</span>
+          <label class="toggle" aria-label="Include symbols">
+            <input type="checkbox" class="toggle__input" id="symbols-toggle">
+            <span class="toggle__track"></span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Generated password display -->
+    <section class="card__section">
+      <p class="card__label">Generated password</p>
+      <div class="password-box" aria-live="polite" aria-atomic="true">
+        <span id="password-display" class="password-box__text"></span>
+      </div>
+    </section>
+
+    <!-- Section 4: Action buttons -->
+    <div class="card__actions">
+      <button class="btn btn--primary" id="copy-btn" type="button">Copy password</button>
+      <button class="btn btn--outline" id="refresh-btn" type="button">Refresh password</button>
+    </div>
+
+  </main>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

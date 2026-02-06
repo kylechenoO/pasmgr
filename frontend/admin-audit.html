@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<!-- ---------------------------------------------------------------------------
+     Author  : Kyle <kyle@hacking-linux.com>
+     Version : 20260206v1
+     --------------------------------------------------------------------------- -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Audit Log – Password Manager</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- -- Top Navigation --------------------------------------------------- -->
+<nav class="topbar">
+  <div class="topbar-left">
+    <h1>Admin Panel</h1>
+    <div class="nav-links">
+      <a href="vault.html">Vault</a>
+      <a href="pasgen.html">PasGen</a>
+      <div class="nav-dropdown">
+        <button class="nav-dropdown-btn active">Admin</button>
+        <div class="nav-dropdown-menu">
+          <a href="admin.html">Create User</a>
+          <a href="admin-users.html">User Management</a>
+          <a href="admin-audit.html" class="active">Audit Log</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <span id="logged-in-email"></span>
+    <button class="btn btn-secondary btn-sm" id="logout-btn">Logout</button>
+  </div>
+</nav>
+
+<!-- -- Page Body ------------------------------------------------------- -->
+<div class="admin-users-page">
+  <div class="card admin-table-card">
+    <h2>Audit Log</h2>
+
+    <!-- Filter bar ------------------------------------------------------ -->
+    <div class="audit-filters">
+      <!-- Multi-select user dropdown ------------------------------------ -->
+      <div class="input-group audit-filter-item">
+        <label>User</label>
+        <div class="ms-wrap" id="af-ms-wrap">
+          <button type="button" class="ms-trigger" id="af-ms-trigger">
+            <span class="ms-label" id="af-ms-label">Select users…</span>
+            <span class="ms-caret">▾</span>
+          </button>
+          <div class="ms-dropdown" id="af-ms-dropdown">
+            <label class="ms-item ms-select-all">
+              <input type="checkbox" id="af-ms-all" /> Select all
+            </label>
+            <div class="ms-list" id="af-ms-list">
+              <!-- populated by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- From / To – custom date-time pickers -------------------------- -->
+      <div class="input-group audit-filter-item">
+        <label>From</label>
+        <div class="dt-wrap" id="dt-since-wrap">
+          <button type="button" class="dt-trigger" id="dt-since-trigger">
+            <span class="dt-display" id="dt-since-display">dd/mm/yyyy, --:--</span>
+            <span class="dt-icon">📅</span>
+          </button>
+          <div class="dt-pop" id="dt-since-pop">
+            <div class="dt-header">
+              <button class="dt-nav" id="dt-since-prev">↑</button>
+              <span class="dt-month" id="dt-since-month"></span>
+              <button class="dt-nav" id="dt-since-next">↓</button>
+            </div>
+            <div class="dt-body">
+              <div class="dt-weekdays">
+                <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+              </div>
+              <div class="dt-days" id="dt-since-days"></div>
+            </div>
+            <div class="dt-time">
+              <input type="number" class="dt-hh" id="dt-since-hh" min="0" max="23" placeholder="--" />
+              <span class="dt-colon">:</span>
+              <input type="number" class="dt-mm" id="dt-since-mm" min="0" max="59" placeholder="--" />
+            </div>
+            <div class="dt-footer">
+              <button class="dt-foot-btn" id="dt-since-clear">Clear</button>
+              <button class="dt-foot-btn dt-foot-today" id="dt-since-today">Today</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <span class="audit-range-sep">–</span>
+      <div class="input-group audit-filter-item">
+        <label>To</label>
+        <div class="dt-wrap" id="dt-until-wrap">
+          <button type="button" class="dt-trigger" id="dt-until-trigger">
+            <span class="dt-display" id="dt-until-display">dd/mm/yyyy, --:--</span>
+            <span class="dt-icon">📅</span>
+          </button>
+          <div class="dt-pop" id="dt-until-pop">
+            <div class="dt-header">
+              <button class="dt-nav" id="dt-until-prev">↑</button>
+              <span class="dt-month" id="dt-until-month"></span>
+              <button class="dt-nav" id="dt-until-next">↓</button>
+            </div>
+            <div class="dt-body">
+              <div class="dt-weekdays">
+                <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+              </div>
+              <div class="dt-days" id="dt-until-days"></div>
+            </div>
+            <div class="dt-time">
+              <input type="number" class="dt-hh" id="dt-until-hh" min="0" max="23" placeholder="--" />
+              <span class="dt-colon">:</span>
+              <input type="number" class="dt-mm" id="dt-until-mm" min="0" max="59" placeholder="--" />
+            </div>
+            <div class="dt-footer">
+              <button class="dt-foot-btn" id="dt-until-clear">Clear</button>
+              <button class="dt-foot-btn" id="dt-until-now">Now</button>
+              <button class="dt-foot-btn dt-foot-today" id="dt-until-today">Today</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-sm" id="af-search-btn">Search</button>
+      <button class="btn btn-secondary btn-sm" id="af-clear-btn">Clear</button>
+      <button class="btn btn-secondary btn-sm icon-btn" id="export-audit-btn">📤<span class="tooltip">Export audit log (.xlsx)</span></button>
+    </div>
+
+    <div class="table-wrap admin-table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="sortable" data-column="id">ID <span class="sort-indicator"></span></th>
+            <th class="sortable" data-column="created_at">Time <span class="sort-indicator"></span></th>
+            <th class="sortable" data-column="user">User <span class="sort-indicator"></span></th>
+            <th class="sortable" data-column="action">Action <span class="sort-indicator"></span></th>
+            <th class="sortable" data-column="request_ip">Request IP <span class="sort-indicator"></span></th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody id="audit-tbody">
+          <!-- populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- -- Toast ----------------------------------------------------------- -->
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+<script>initAuditPage();</script>
+<!-- -- Footer ---------------------------------------------------------- -->
+<footer class="app-footer">
+  <div class="app-footer-content">
+    <span class="app-footer-item">© 2026 Kyle</span>
+    <span class="app-footer-item">Email: <a href="mailto:kyle@hacking-linux.com">kyle@hacking-linux.com</a></span>
+    <span class="app-footer-item">Version: 20260206v1</span>
+    <span class="app-footer-item">License: <a href="https://opensource.org/licenses/MIT" target="_blank">MIT</a></span>
+  </div>
+</footer>
+
+
+</body>
+</html>

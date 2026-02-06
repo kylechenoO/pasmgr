@@ -1,0 +1,28 @@
+# ---------------------------------------------------------------------------
+# Password Manager Configuration Template
+# Copy this file to app.conf and update with your actual values
+#
+# Format: Simple KEY=VALUE pairs (one per line)
+# Lines starting with # are comments and will be ignored
+# ---------------------------------------------------------------------------
+
+# Database connection string
+# Format: mysql+pymysql://username:password@host:port/database
+database_url=mysql+pymysql://username:password@localhost:3306/pasmgr
+
+# Security Keys
+# Generate SECRET_KEY (min 32 characters):
+#   python3 -c "import secrets; print(secrets.token_hex(32))"
+secret_key=your-secret-key-here-min-32-chars
+
+# Generate MASTER_ENCRYPTION_KEY (base64-encoded 32 bytes):
+#   python3 -c "import base64, os; print(base64.urlsafe_b64encode(os.urandom(32)).decode())"
+master_encryption_key=your-master-encryption-key-here-base64-32-bytes
+
+# JWT token expiration in minutes (default: 10080 = 7 days)
+access_token_expire_minutes=30
+
+# First Admin User (used only by bin/seed_admin.py)
+# These values are inert after the first admin is created
+first_admin_email=admin@example.com
+first_admin_password=ChangeMe123!

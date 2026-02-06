@@ -1,0 +1,1499 @@
+/* ---------------------------------------------------------------------------
+ * Author  : Kyle <kyle@hacking-linux.com>
+ * Version : 20260206v1
+ * --------------------------------------------------------------------------- */
+/* ==========================================================================
+   Password Manager – Global Stylesheet
+   Dark theme, single source of style for all three pages.
+   ========================================================================== */
+
+/* -- Custom Properties (tokens) ------------------------------------------- */
+:root {
+  --bg-primary:    #000000;
+  --bg-secondary:  #0a0a0a;
+  --bg-card:       #141414;
+  --bg-card-hover: #1a1a1a;
+  --bg-input:      #0f0f0f;
+
+  --text-primary:  #e8eaf0;
+  --text-secondary:#9ca3b0;
+  --text-muted:    #5f6574;
+
+  --accent:        #6c63ff;
+  --accent-hover:  #7d75ff;
+  --accent-subtle: rgba(108, 99, 255, 0.12);
+
+  --danger:        #ef4444;
+  --danger-hover:  #dc2626;
+  --success:       #22c55e;
+  --warning:       #f59e0b;
+
+  --border:        #222222;
+  --border-focus:  var(--accent);
+
+  --radius:        8px;
+  --radius-sm:     5px;
+  --shadow:        0 2px 12px rgba(0, 0, 0, 0.25);
+  --shadow-lg:     0 6px 28px rgba(0, 0, 0, 0.35);
+
+  --font:          'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono:     'SF Mono', 'Consolas', monospace;
+
+  --sidebar-w:     260px;
+  --topbar-h:      52px;
+}
+
+/* -- Reset ---------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  padding-bottom: 40px; /* Space for footer */
+  font-family: var(--font);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+input, textarea, select, button {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* -- Topbar --------------------------------------------------------------- */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--topbar-h);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 100;
+}
+
+.topbar-left { display: flex; align-items: center; gap: 16px; }
+.topbar-left h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.3px; }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+
+.nav-links { display: flex; gap: 8px; align-items: center; }
+.nav-links a {
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+}
+.nav-links a:hover, .nav-links a.active {
+  background: var(--accent-subtle);
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* -- Nav dropdown (Admin menu) ------------------------------------------ */
+.nav-dropdown {
+  position: relative;
+}
+
+/* the trigger button looks like a nav link */
+.nav-dropdown-btn {
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.nav-dropdown-btn:hover,
+.nav-dropdown-btn.active {
+  background: var(--accent-subtle);
+  color: var(--accent);
+}
+/* small down-arrow caret */
+.nav-dropdown-btn::after {
+  content: "▾";
+  font-size: 10px;
+  opacity: 0.6;
+}
+
+/* invisible bridge: fills the gap between button and menu so hover
+   is never lost when the mouse moves downward */
+.nav-dropdown::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 8px;                 /* must be >= the gap below */
+  display: none;               /* only shown while dropdown is open */
+}
+.nav-dropdown:hover::after {
+  display: block;
+}
+
+/* the floating menu – hidden until parent is hovered */
+.nav-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  min-width: 180px;
+  z-index: 150;
+  overflow: hidden;
+}
+
+.nav-dropdown:hover .nav-dropdown-menu {
+  display: block;
+}
+
+.nav-dropdown-menu a {
+  display: block;
+  padding: 9px 16px;
+  color: var(--text-primary);
+  font-size: 14px;
+  white-space: nowrap;
+  text-decoration: none;
+  border-radius: 0;
+}
+.nav-dropdown-menu a:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+.nav-dropdown-menu a.active {
+  background: var(--accent-subtle);
+  color: var(--accent);
+}
+
+#logged-in-email {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* -- Layout helpers ------------------------------------------------------- */
+.page-body {
+  margin-top: var(--topbar-h);
+  display: flex;
+  height: calc(100vh - var(--topbar-h));
+}
+
+/* Centered page (login) */
+.centered-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+/* -- Sidebar -------------------------------------------------------------- */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: visible;          /* allow tooltip to overflow outside sidebar */
+}
+
+.sidebar-header {
+  padding: 20px 16px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;         /* positioning anchor for tooltips */
+  z-index: 10;                /* keep tooltips above item-list */
+  overflow: visible;
+}
+
+.sidebar-header h2 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+/* Button group: New / Export / Import – tightly packed */
+.sidebar-header-btns {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+/* Export / Import icon buttons – slightly larger, icon centred */
+.sidebar-header-btns .icon-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  position: relative;   /* positioning anchor for tooltip */
+}
+
+/* -- Custom Tooltip ------------------------------------------------------- */
+.sidebar-header-btns .icon-btn .tooltip {
+  /* hidden by default */
+  visibility: hidden;
+  opacity: 0;
+  /* position: centred below the button */
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  /* appearance */
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  /* transition */
+  transition: opacity 0.18s, visibility 0.18s;
+  /* sit above sidebar content */
+  z-index: 50;
+  /* do not let the tooltip itself intercept pointer events */
+  pointer-events: none;
+}
+
+/* small arrow – drawn with the border trick */
+.sidebar-header-btns .icon-btn .tooltip::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid var(--border);
+}
+.sidebar-header-btns .icon-btn .tooltip::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid var(--bg-card);
+}
+
+/* reveal on hover */
+.sidebar-header-btns .icon-btn:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Import button (rightmost) – right-align tooltip so it stays inside sidebar */
+#import-btn .tooltip {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+#import-btn .tooltip::before,
+#import-btn .tooltip::after {
+  left: auto;
+  right: 12px;
+  transform: none;
+}
+
+/* -- Sidebar search ------------------------------------------------------- */
+.sidebar-search {
+  margin: 0 10px 8px;
+  position: relative;
+}
+
+.sidebar-search .search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  pointer-events: none;
+  /* keep the emoji vertically centred */
+  line-height: 1;
+}
+
+.sidebar-search input {
+  width: 100%;
+  padding: 7px 12px 7px 32px;   /* left pad leaves room for icon */
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.sidebar-search input::placeholder {
+  color: var(--text-muted);
+}
+
+.sidebar-search input:focus {
+  border-color: var(--border-focus);
+}
+
+.item-list {
+  list-style: none;
+  flex: 1;
+  min-height: 0;              /* required so flex child can scroll */
+  overflow-y: auto;
+  padding: 0 8px 8px;
+}
+
+.item-list li {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s;
+  border: 1px solid transparent;
+}
+
+.item-list li:hover {
+  background: var(--bg-card);
+}
+
+.item-list li.active {
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+}
+
+.item-list li .item-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.item-list li .item-title {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* category emoji – fixed width so titles line up */
+.cat-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+  line-height: 1;
+}
+
+.item-list li .item-url {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  margin-left: 28px;         /* align under title text, past the icon */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-empty {
+  color: var(--text-muted);
+  font-size: 13px;
+  text-align: center;
+  padding: 32px 16px;
+}
+
+/* -- Main content --------------------------------------------------------- */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px;
+}
+
+/* -- Card ----------------------------------------------------------------- */
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px;
+  max-width: 520px;
+  width: 100%;
+}
+
+.card h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.card p.subtitle {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+/* -- Buttons -------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover { background: var(--accent-hover); }
+
+.btn-secondary {
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+.btn-secondary:hover { background: var(--bg-card-hover); }
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+}
+.btn-danger:hover { background: var(--danger-hover); }
+
+.btn-sm {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.btn-full { width: 100%; }
+
+/* -- Form elements -------------------------------------------------------- */
+.input-group {
+  margin-bottom: 18px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.input-group input,
+.input-group textarea,
+.input-group select {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.input-group input:focus,
+.input-group textarea:focus,
+.input-group select:focus {
+  border-color: var(--border-focus);
+}
+
+.input-group select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239ca3b0' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+.input-group textarea {
+  resize: vertical;
+  min-height: 72px;
+}
+
+/* Password row: input + buttons side by side */
+.password-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.password-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.password-row .btn {
+  flex-shrink: 0;
+}
+
+/* Hidden password style for textarea */
+textarea.password-hidden {
+  -webkit-text-security: disc;
+  font-family: text-security-disc;
+}
+
+/* -- Error / info messages ------------------------------------------------ */
+.error-msg {
+  color: var(--danger);
+  font-size: 13px;
+  margin-top: 10px;
+  display: none;
+}
+
+.error-msg.visible { display: block; }
+
+/* -- Generator options panel ---------------------------------------------- */
+.gen-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-top: 12px;
+  display: none;
+}
+
+.gen-panel.visible { display: block; }
+
+.gen-panel .gen-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.gen-panel .gen-row:last-child { margin-bottom: 0; }
+
+.gen-panel .radio-group, .gen-panel .check-group {
+  display: flex;
+  gap: 14px;
+}
+
+.gen-panel label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.gen-panel input[type="radio"],
+.gen-panel input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+.gen-panel .length-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.gen-panel .length-group input[type="number"] {
+  width: 56px;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  text-align: center;
+  font-size: 14px;
+}
+
+.gen-panel .length-group input[type="range"] {
+  width: 120px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+}
+
+.gen-panel .length-group input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+}
+
+.gen-panel .length-group input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  border: none;
+}
+
+/* -- Form action row ------------------------------------------------------ */
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+/* -- Modal ---------------------------------------------------------------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.modal-overlay.visible {
+  display: flex;
+}
+
+.modal {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 28px;
+  width: 90%;
+  max-width: 420px;
+}
+
+.modal h2 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.modal p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+/* -- Toast notification --------------------------------------------------- */
+.toast {
+  position: fixed;
+  top: 72px;
+  right: 24px;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 14px 20px;
+  font-size: 14px;
+  max-width: 340px;
+  z-index: 300;
+  display: none;
+  animation: toast-slide-in 0.2s ease;
+  pointer-events: none;
+}
+
+.toast.visible { display: block; }
+.toast.success { border-left: 3px solid var(--success); }
+.toast.error   { border-left: 3px solid var(--danger); }
+
+@keyframes toast-slide-in {
+  from { transform: translateX(24px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* -- Table (admin user list) ---------------------------------------------- */
+.table-wrap {
+  overflow-x: auto;
+  margin-top: 16px;
+}
+
+table.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+table.table th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+table.table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+}
+
+table.table tr:last-child td { border-bottom: none; }
+table.table tr:hover td { background: var(--bg-card-hover); }
+
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.badge-admin   { background: rgba(108,99,255,0.18); color: var(--accent); }
+.badge-user    { background: rgba(34,197,94,0.15);  color: var(--success); }
+.badge-active  { background: rgba(34,197,94,0.12);  color: var(--success); }
+.badge-inactive{ background: rgba(239,68,68,0.15);  color: var(--danger); }
+.badge-yes     { background: rgba(245,158,11,0.15); color: var(--warning); }
+
+.actions-cell { display: flex; gap: 6px; }
+
+/* -- User Management full-page layout ------------------------------------- */
+.admin-users-page {
+  margin-top: var(--topbar-h);
+  height: calc(100vh - var(--topbar-h));
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+}
+
+/* card stretches to fill available height */
+.admin-table-card {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  max-width: none;
+}
+
+/* table-wrap inside that card scrolls */
+.admin-table-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* -- Two-col helper (kept for any future use) ----------------------------- */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* -- Audit-log filter bar ------------------------------------------------- */
+.audit-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.audit-filter-item {
+  margin-bottom: 0;          /* override .input-group default */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+
+/* inline label inside filter row – no block / margin-bottom */
+.audit-filter-item > label {
+  display: inline;
+  margin-bottom: 0;
+  white-space: nowrap;
+}
+
+.audit-filter-item > .dt-wrap,
+.audit-filter-item > .ms-wrap { width: 200px; }
+
+/* en-dash between From and To pickers */
+.audit-range-sep {
+  color: var(--text-muted);
+  font-size: 18px;
+  margin: 0 -6px;            /* tighten the gap on both sides */
+}
+
+/* Search / Clear – same height as the trigger buttons */
+.audit-filters > .btn {
+  padding: 7px 16px;
+  font-size: 13px;
+}
+
+/* -- Custom date-time picker ----------------------------------------------- */
+.dt-wrap {
+  position: relative;
+}
+
+/* trigger button that looks like an input */
+.dt-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 200px;
+  padding: 7px 10px;
+  gap: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+}
+.dt-trigger:hover          { border-color: var(--text-muted); }
+.dt-trigger.open           { border-color: var(--border-focus); }
+.dt-display                { flex: 1; min-width: 0; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+.dt-icon                   { flex-shrink: 0; font-size: 15px; }
+
+/* the popover panel */
+.dt-pop {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 240px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  z-index: 500;
+  padding: 10px;
+}
+.dt-pop.visible { display: block; }
+
+/* month header row: ↑  February 2026  ↓ */
+.dt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.dt-month {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.dt-nav {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+.dt-nav:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+
+/* weekday header + day grid (7-col) */
+.dt-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.dt-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.dt-days button {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 13px;
+  padding: 5px 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: center;
+}
+.dt-days button:hover               { background: var(--bg-card-hover); }
+.dt-days button.dt-today            { color: var(--accent); font-weight: 600; }
+.dt-days button.dt-selected         { background: var(--accent); color: #fff; }
+.dt-days button.dt-selected:hover   { background: var(--accent-hover); }
+.dt-days button:disabled            { color: var(--text-muted); cursor: default; opacity: 0.4; }
+
+/* time spinners row */
+.dt-time {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 10px;
+}
+.dt-hh, .dt-mm {
+  width: 38px;
+  text-align: center;
+  padding: 5px 4px;
+  font-size: 18px;
+  font-family: var(--font-mono);
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  -moz-appearance: textfield;
+}
+.dt-hh::-webkit-inner-spin-button,
+.dt-mm::-webkit-inner-spin-button { -webkit-appearance: none; display: none; }
+.dt-hh:focus, .dt-mm:focus { border-color: var(--border-focus); outline: none; }
+.dt-colon {
+  font-size: 18px;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+
+/* footer row: Clear  [Now]  Today */
+.dt-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+.dt-foot-btn {
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+.dt-foot-btn:hover       { color: var(--text-primary); background: var(--bg-card-hover); }
+.dt-foot-btn.dt-foot-today { color: var(--accent); font-weight: 600; }
+
+/* -- Multi-select user dropdown ------------------------------------------- */
+.ms-wrap {
+  position: relative;
+}
+
+/* the clickable trigger bar */
+.ms-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 200px;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  gap: 6px;
+}
+
+.ms-trigger:hover { border-color: var(--text-muted); }
+.ms-trigger.open  { border-color: var(--border-focus); }
+
+.ms-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ms-caret { color: var(--text-muted); font-size: 10px; flex-shrink: 0; }
+
+/* the dropdown panel – hidden by default */
+.ms-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 220px;
+  max-height: 200px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  z-index: 400;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+.ms-dropdown.visible { display: flex; }
+
+/* "Select all" row – pinned at top */
+.ms-select-all {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ms-select-all:hover { background: var(--bg-card-hover); }
+.ms-select-all input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border: 2px solid var(--text-muted);
+  border-radius: 3px;
+  background: var(--bg-input);
+  cursor: pointer;
+  position: relative;
+}
+.ms-select-all input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.ms-select-all input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* scrollable list of individual users */
+.ms-list {
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* each user row: [ ☑ ] email@… */
+.ms-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 7px 12px;
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ms-item:hover { background: var(--bg-card-hover); }
+
+.ms-item input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin: 0;
+  border: 2px solid var(--text-muted);
+  border-radius: 3px;
+  background: var(--bg-input);
+  cursor: pointer;
+  position: relative;
+}
+.ms-item input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.ms-item input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.ms-item .ms-email {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* -- Scrollbar (webkit) --------------------------------------------------- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Password Generator Page
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.pasgen-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 80px 24px 24px;
+  min-height: 100vh;
+  background: var(--bg-primary);
+}
+
+.pasgen-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 48px;
+  max-width: 680px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+}
+
+.pasgen-card h2 {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 24px 0;
+}
+
+.pasgen-card h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 32px 0 20px 0;
+}
+
+/* Type Selector */
+.pasgen-type-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.pasgen-type-btn {
+  background: var(--bg-input);
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-secondary);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.pasgen-type-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border);
+}
+
+.pasgen-type-btn.active {
+  background: var(--bg-secondary);
+  border-color: var(--primary);
+  color: var(--text-primary);
+}
+
+.pasgen-icon {
+  font-size: 24px;
+}
+
+/* Options */
+.pasgen-options {
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+}
+
+.pasgen-slider-group {
+  margin-bottom: 24px;
+}
+
+.pasgen-slider-group label {
+  display: block;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.pasgen-slider-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pasgen-slider-wrapper input[type="range"] {
+  flex: 1;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--border);
+  border-radius: 3px;
+  outline: none;
+}
+
+.pasgen-slider-wrapper input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.pasgen-slider-wrapper input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.pasgen-slider-wrapper input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  border: none;
+}
+
+.pasgen-slider-wrapper input[type="number"] {
+  width: 80px;
+  padding: 10px 16px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.pasgen-toggles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.pasgen-toggle-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: var(--bg-input);
+  border-radius: var(--radius);
+}
+
+.pasgen-toggle-item label:first-child {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #4a4a4a;
+  transition: 0.3s;
+  border-radius: 28px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+  background-color: var(--primary);
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(22px);
+}
+
+/* Info Text */
+.pasgen-info {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+  padding: 16px;
+  background: var(--bg-input);
+  border-radius: var(--radius);
+}
+
+/* Result */
+.pasgen-result {
+  margin-top: 8px;
+  margin-bottom: 24px;
+}
+
+.pasgen-password {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+  letter-spacing: 1px;
+  word-break: break-all;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pasgen-password:empty::before {
+  content: 'Click "Refresh password" to generate';
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* Actions */
+.pasgen-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.pasgen-actions .btn {
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pasgen-card {
+    padding: 32px 24px;
+  }
+
+  .pasgen-type-selector {
+    grid-template-columns: 1fr;
+  }
+
+  .pasgen-toggles {
+    grid-template-columns: 1fr;
+  }
+
+  .pasgen-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* -- Footer ---------------------------------------------------------------- */
+.app-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
+  padding: 8px 16px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: center;
+  z-index: 100;
+}
+
+.app-footer a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.app-footer a:hover {
+  text-decoration: underline;
+}
+
+.app-footer-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.app-footer-item {
+  display: inline-block;
+}
+
+@media (max-width: 768px) {
+  .app-footer-content {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
